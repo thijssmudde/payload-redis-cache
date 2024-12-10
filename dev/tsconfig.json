@@ -21,6 +21,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@redisplugin": ["../src/index.ts"],
       "@payload-config": ["./payload.config.ts"],
       "@payload": ["./src/payload"]
     }

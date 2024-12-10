@@ -1,5 +1,5 @@
 import path from 'path'
-import type { Config } from 'payload/config'
+import type { Config } from 'payload'
 import type { Configuration as WebpackConfig } from 'webpack'
 import type { PluginOptions } from './types'
 
@@ -10,26 +10,26 @@ interface ExtendWebpackConfigArgs {
 
 export const extendWebpackConfig =
   (args: ExtendWebpackConfigArgs) =>
-  (webpackConfig: WebpackConfig): WebpackConfig => {
-    const { config: originalConfig } = args
-    const existingWebpackConfig =
-      typeof originalConfig.admin?.webpack === 'function'
-        ? originalConfig.admin.webpack(webpackConfig)
-        : webpackConfig
+    (webpackConfig: WebpackConfig): WebpackConfig => {
+      const { config: originalConfig } = args
+      const existingWebpackConfig =
+        typeof originalConfig.admin?.webpack === 'function'
+          ? originalConfig.admin.webpack(webpackConfig)
+          : webpackConfig
 
-    const adaptersPath = path.resolve(__dirname, 'adapters')
-    const adaptersMock = path.resolve(__dirname, 'mocks')
+      const adaptersPath = path.resolve(__dirname, 'adapters')
+      const adaptersMock = path.resolve(__dirname, 'mocks')
 
-    const config: WebpackConfig = {
-      ...existingWebpackConfig,
-      resolve: {
-        ...(existingWebpackConfig.resolve || {}),
-        alias: {
-          ...(existingWebpackConfig.resolve?.alias || {}),
-          [adaptersPath]: adaptersMock
+      const config: WebpackConfig = {
+        ...existingWebpackConfig,
+        resolve: {
+          ...(existingWebpackConfig.resolve || {}),
+          alias: {
+            ...(existingWebpackConfig.resolve?.alias || {}),
+            [adaptersPath]: adaptersMock
+          }
         }
       }
-    }
 
-    return config
-  }
+      return config
+    }

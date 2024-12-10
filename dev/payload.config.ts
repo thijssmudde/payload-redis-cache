@@ -1,7 +1,8 @@
 import { buildConfig } from 'payload'
 
-// import { cachePlugin, initRedis } from '@aengz/payload-redis-cache'
-import { cachePlugin } from '@aengz/payload-redis-cache'
+import { cachePlugin, initRedis } from '@aengz/payload-redis-cache'
+// import { cachePlugin, initRedis } from '@redisplugin'
+// import { cachePlugin } from '@aengz/payload-redis-cache'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 
