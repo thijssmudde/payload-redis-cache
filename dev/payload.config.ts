@@ -1,6 +1,6 @@
 import { buildConfig } from 'payload'
 
-import { cachePlugin, initRedis } from '@aengz/payload-redis-cache'
+// import { cachePlugin, initRedis } from '@aengz/payload-redis-cache'
 // import { cachePlugin, initRedis } from '@redisplugin'
 // import { cachePlugin } from '@aengz/payload-redis-cache'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
@@ -27,10 +27,10 @@ export default buildConfig({
   // Whichever Database Adapter you're using should go here
   // Mongoose is shown as an example, but you can also use Postgres
   db: mongooseAdapter({
-    url: process.env.DATABASE_URI || ''
+    url: process.env.MONGODB_URI || ''
   }),
   plugins: [
-    cachePlugin({ excludedCollections: ['users'] }) // ADD HERE
+    // cachePlugin({ excludedCollections: ['users'] }) // ADD HERE
   ],
   // Your Payload secret - should be a complex and secure string, unguessable
   secret: process.env.PAYLOAD_SECRET || ''
