@@ -19,23 +19,14 @@ export const initRedis = (params: RedisInitOptions) => {
 export const cachePlugin =
   (pluginOptions: PluginOptions): Plugin =>
     (config: Config): Config | Promise<Config> => {
-      const includedCollections: string[] = []
-      const includedGlobals: string[] = []
-
       // Merge incoming plugin options with the default ones
-      const {
-        includedCollections: userIncludedCollections = [],
-        includedGlobals: userIncludedGlobals = [],
-        includedPaths = []
-      } = pluginOptions
+      const { includedCollections = [], includedGlobals = [], includedPaths = [] } = pluginOptions
 
       const collections = config?.collections
         ? config.collections?.map((collection): CollectionConfig => {
           const { hooks } = collection
 
-          if (userIncludedCollections.includes(collection.slug)) {
-            includedCollections.push(collection.slug)
-
+          if (includedCollections.includes(collection.slug)) {
             const afterChange = [...(hooks?.afterChange || []), invalidateCacheAfterChangeHook]
             const afterDelete = [...(hooks?.afterDelete || []), invalidateCacheAfterDeleteHook]
 
@@ -57,9 +48,7 @@ export const cachePlugin =
         ? config.globals?.map((global): GlobalConfig => {
           const { hooks } = global
 
-          if (userIncludedGlobals.includes(global.slug)) {
-            includedGlobals.push(global.slug)
-
+          if (includedGlobals.includes(global.slug)) {
             const afterChange = [...(hooks?.afterChange || []), invalidateCacheAfterChangeHook]
 
             return {
