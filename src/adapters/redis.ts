@@ -22,7 +22,13 @@ export class RedisContext implements IRedisContext {
     this.namespace = namespace
     this.indexesName = indexesName
     try {
-      this.redisClient = createClient({ url })
+      this.redisClient = createClient({
+        url,
+        socket: {
+          tls: true,
+          rejectUnauthorized: false
+        }
+      })
       this.redisClient.connect()
       logger.info('Connected to Redis successfully!')
 
