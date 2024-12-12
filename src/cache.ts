@@ -10,9 +10,10 @@ export const initRedis = (params: RedisInitOptions) => {
   const {
     redisUrl: url,
     redisNamespace: namespace = 'payload',
-    redisIndexesName: indexesName = 'payload-cache-index'
+    redisIndexesName: indexesName = 'payload-cache-index',
+    socketOptions
   } = params
-  initRedisContext({ url, namespace, indexesName })
+  initRedisContext({ url, namespace, indexesName, socketOptions })
 }
 
 export const cachePlugin =

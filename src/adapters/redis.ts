@@ -1,4 +1,4 @@
-import { createClient, RedisClientType } from 'redis'
+import { createClient, RedisClientOptions, RedisClientType } from 'redis'
 import { logger } from './logger'
 
 export interface IRedisContext {
@@ -9,6 +9,7 @@ export interface InitRedisContextParams {
   url: string
   namespace: string
   indexesName: string
+  socketOptions?: RedisClientOptions['socket']
 }
 
 export class RedisContext implements IRedisContext {
@@ -17,17 +18,14 @@ export class RedisContext implements IRedisContext {
   private indexesName: string | null = null
 
   public init(params: InitRedisContextParams) {
-    const { url, namespace, indexesName } = params
+    const { url, namespace, indexesName, socketOptions } = params
 
     this.namespace = namespace
     this.indexesName = indexesName
     try {
       this.redisClient = createClient({
         url,
-        socket: {
-          tls: true,
-          rejectUnauthorized: false
-        }
+        socket: socketOptions
       })
       this.redisClient.connect()
       logger.info('Connected to Redis successfully!')

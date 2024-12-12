@@ -1,7 +1,10 @@
+import { RedisClientOptions } from 'redis'
+
 export interface RedisInitOptions {
   redisUrl: string
   redisNamespace?: string
   redisIndexesName?: string
+  socketOptions?: RedisClientOptions['socket']
 }
 
 export interface PluginOptions {
