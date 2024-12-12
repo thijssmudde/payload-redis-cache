@@ -5,8 +5,8 @@ export interface RedisInitOptions {
 }
 
 export interface PluginOptions {
-  excludedCollections?: string[]
-  excludedGlobals?: string[]
+  includedCollections?: string[]
+  includedGlobals?: string[]
   includedPaths?: string[]
 }
 

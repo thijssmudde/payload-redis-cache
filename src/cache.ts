@@ -17,72 +17,81 @@ export const initRedis = (params: RedisInitOptions) => {
 
 export const cachePlugin =
   (pluginOptions: PluginOptions): Plugin =>
-  (config: Config): Config | Promise<Config> => {
-    const includedCollections: string[] = []
-    const includedGlobals: string[] = []
-    // Merge incoming plugin options with the default ones
-    const { excludedCollections = [], excludedGlobals = [], includedPaths = [] } = pluginOptions
+    (config: Config): Config | Promise<Config> => {
+      const includedCollections: string[] = []
+      const includedGlobals: string[] = []
 
-    const collections = config?.collections
-      ? config.collections?.map((collection): CollectionConfig => {
+      // Merge incoming plugin options with the default ones
+      const {
+        includedCollections: userIncludedCollections = [],
+        includedGlobals: userIncludedGlobals = [],
+        includedPaths = []
+      } = pluginOptions
+
+      const collections = config?.collections
+        ? config.collections?.map((collection): CollectionConfig => {
           const { hooks } = collection
 
-          if (!excludedCollections.includes(collection.slug)) {
+          if (userIncludedCollections.includes(collection.slug)) {
             includedCollections.push(collection.slug)
-          }
 
-          const afterChange = [...(hooks?.afterChange || []), invalidateCacheAfterChangeHook]
-          const afterDelete = [...(hooks?.afterDelete || []), invalidateCacheAfterDeleteHook]
+            const afterChange = [...(hooks?.afterChange || []), invalidateCacheAfterChangeHook]
+            const afterDelete = [...(hooks?.afterDelete || []), invalidateCacheAfterDeleteHook]
 
-          return {
-            ...collection,
-            hooks: {
-              ...hooks,
-              afterChange,
-              afterDelete
+            return {
+              ...collection,
+              hooks: {
+                ...hooks,
+                afterChange,
+                afterDelete
+              }
             }
           }
-        })
-      : []
 
-    const globals = config?.globals
-      ? config.globals?.map((global): GlobalConfig => {
+          return collection
+        })
+        : []
+
+      const globals = config?.globals
+        ? config.globals?.map((global): GlobalConfig => {
           const { hooks } = global
 
-          if (!excludedGlobals.includes(global.slug)) {
+          if (userIncludedGlobals.includes(global.slug)) {
             includedGlobals.push(global.slug)
-          }
 
-          const afterChange = [...(hooks?.afterChange || []), invalidateCacheAfterChangeHook]
+            const afterChange = [...(hooks?.afterChange || []), invalidateCacheAfterChangeHook]
 
-          return {
-            ...global,
-            hooks: {
-              ...hooks,
-              afterChange
+            return {
+              ...global,
+              hooks: {
+                ...hooks,
+                afterChange
+              }
             }
           }
-        })
-      : []
 
-    return {
-      ...config,
-      admin: {
-        ...(config?.admin || {}),
-        webpack: extendWebpackConfig({ config })
-      },
-      collections,
-      globals,
-      express: {
-        preMiddleware: [
-          ...(config?.express?.preMiddleware || []),
-          cacheMiddleware({
-            includedCollections,
-            includedGlobals,
-            includedPaths,
-            apiBaseUrl: config?.routes?.api || '/api'
-          })
-        ]
+          return global
+        })
+        : []
+
+      return {
+        ...config,
+        admin: {
+          ...(config?.admin || {}),
+          webpack: extendWebpackConfig({ config })
+        },
+        collections,
+        globals,
+        express: {
+          preMiddleware: [
+            ...(config?.express?.preMiddleware || []),
+            cacheMiddleware({
+              includedCollections,
+              includedGlobals,
+              includedPaths,
+              apiBaseUrl: config?.routes?.api || '/api'
+            })
+          ]
+        }
       }
     }
-  }
